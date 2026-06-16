@@ -42,6 +42,56 @@
 
     <h2>📦 訂單管理系統</h2>
 
+    <div style="margin:15px 0 25px 0;">
+
+        <a href="/orders"
+        style="
+        background:#6c757d;
+        color:white;
+        padding:8px 15px;
+        border-radius:6px;
+        text-decoration:none;
+        margin-right:8px;">
+        📋 全部
+        </a>
+
+        <a href="/orders?status=paid"
+        style="
+        background:#28a745;
+        color:white;
+        padding:8px 15px;
+        border-radius:6px;
+        text-decoration:none;
+        margin-right:8px;">
+        🟢 待出貨
+        </a>
+
+        <a href="/orders?status=shipped"
+        style="
+        background:#17a2b8;
+        color:white;
+        padding:8px 15px;
+        border-radius:6px;
+        text-decoration:none;">
+        📦 已出貨
+        </a>
+
+    </div>
+
+    <p style="margin:20px 0;">
+        <a href="/admin"
+        style="
+        background:#28a745;
+        color:white;
+        padding:10px 18px;
+        border-radius:8px;
+        text-decoration:none;
+        font-weight:bold;
+        display:inline-block;">
+        🏠 回管理後台
+        </a>
+    </p>
+
     <!-- 🔥 簡單統計 -->
     <p style="color:#00e5ff;">
         訂單數量：{{ orders|length }}

@@ -411,11 +411,7 @@
             <div>
                 💎 我的準提金：
                 <span>{{ user_points }}</span>
-            </div>
-
-            <a href="/bag" class="deposit-btn">
-                ➕ 儲值準提金
-            </a>
+            </div>            
 
         </div>
 
@@ -495,10 +491,10 @@
 
             <div class="thumbs">
                 {% if p['image1'] %}
-                <img src="{{ p['image1'] }}" onclick="event.stopPropagation(); switchImg(this)">
+                <img src="{{ p['image1'] }}" onclick="switchImg(this, event)">
                 {% endif %}
                 {% if p['image2'] %}
-                <img src="{{ p['image2'] }}" onclick="event.stopPropagation(); switchImg(this)">
+                <img src="{{ p['image2'] }}" onclick="switchImg(this, event)">
                 {% endif %}
             </div>
 
@@ -541,10 +537,10 @@
 
             <div class="thumbs">
                 {% if p['image1'] %}
-                <img src="{{ p['image1'] }}" onclick="event.stopPropagation(); switchImg(this)">
+                <img src="{{ p['image1'] }}" onclick="switchImg(this, event)">
                 {% endif %}
                 {% if p['image2'] %}
-                <img src="{{ p['image2'] }}" onclick="event.stopPropagation(); switchImg(this)">
+                <img src="{{ p['image2'] }}" onclick="switchImg(this, event)">
                 {% endif %}
             </div>
 
@@ -622,7 +618,9 @@
 
         function switchImg(el, event) {
 
-            event.stopPropagation();
+            if (event) {
+                event.stopPropagation();
+            }
 
             let card = el.closest(".card");
 

@@ -333,6 +333,21 @@
             color: #111;
         }
 
+        .bag-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:12px;
+        }
+
+        .bag-grid form{
+            margin:0;
+        }
+
+        .btn{
+            margin-bottom:0;
+            min-height:80px;
+        }
+
         /* 手機版 */
         @media (max-width: 768px) {
 
@@ -439,8 +454,14 @@
 
             .trust-mini {
                 margin-bottom: 15px;
+            }           
+
+            .bag-grid{
+                grid-template-columns:1fr;
             }
+
         }
+        
     </style>
 </head>
 
@@ -500,76 +521,37 @@
 
                 <div class="note">
                     🔥 福袋兌換專區
-                </div>
+                <div class="bag-grid">
 
                 <form method="POST" action="/buy/silver">
                     <button class="btn">
                         🥈 大銀袋
-                        <span class="bag-cost">消耗 2 準提金</span>
+                        <span class="bag-cost">2 準提金</span>
                     </button>
                 </form>
 
                 <form method="POST" action="/buy/gold">
                     <button class="btn">
                         🥇 大金袋
-                        <span class="bag-cost">消耗 3 準提金</span>
+                        <span class="bag-cost">3 準提金</span>
                     </button>
                 </form>
 
                 <form method="POST" action="/buy/pray_silver">
                     <button class="btn">
                         ✨ 準提銀袋
-                        <span class="bag-cost">消耗 5 準提金</span>
+                        <span class="bag-cost">5 準提金</span>
                     </button>
                 </form>
 
                 <form method="POST" action="/buy/pray_gold">
                     <button class="btn">
                         🔥 準提金袋
-                        <span class="bag-cost">消耗 10 準提金</span>
+                        <span class="bag-cost">10 準提金</span>
                     </button>
                 </form>
 
-            </div>
-
-            <!-- 儲值 -->
-            <div class="box">
-
-                <h2>💰 準提金儲值</h2>
-
-                <div class="note">
-                    ⚡ 儲值可用於福袋與商城消費
-                </div>
-
-                <form method="POST" action="/topup/150">
-                    <button class="btn topup-green">
-                        🌱 儲值 補充
-                        <span class="bag-cost">🌱 補充 150 準提金</span>
-                    </button>
-                </form>
-
-                <form method="POST" action="/topup/300">
-                    <button class="btn topup-blue">
-                        ⚡ 熱門 補充
-                        <span class="bag-cost">⚡ 補充 300 準提金</span>
-                    </button>
-                </form>
-
-                <form method="POST" action="/topup/500">
-                    <button class="btn topup-purple">
-                        ✨ 進階 補充
-                        <span class="bag-cost">✨ 補充 500 準提金</span>
-                    </button>
-                </form>
-
-                <form method="POST" action="/topup/800">
-                    <button class="btn topup-gold">
-                        👑 VIP 補充
-                        <span class="bag-cost">👑 補充 800 準提金</span>
-                    </button>
-                </form>
-
-            </div>
+            </div>            
 
         </div>
 
@@ -618,11 +600,11 @@
             </div>
 
             <div class="charity-text">
-                福袋收益 60% 用於：<br><br>
+                福袋收益 60% 用於：<br>
 
                 ① 急難救助（老人 / 孩童）<br>
                 ② 弱勢族群補助<br>
-                ④ 支持公益團體<br>
+                ③ 支持公益團體<br>
                 
                 ~~ 弘揚中華傳統文化宮廟修繕・興建捐助 ~~
             </div>

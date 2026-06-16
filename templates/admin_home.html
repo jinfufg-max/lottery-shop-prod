@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理後台</title>
+</head>
+<body>
+
+<h1>📊 管理後台</h1>
+
+<hr>
+
+<h2>系統總覽</h2>
+
+<p>會員數：{{ user_count }}</p>
+
+<p>商品數：{{ product_count }}</p>
+
+<p>訂單數：{{ order_count }}</p>
+
+<p>待出貨：{{ pending_ship }}</p>
+
+<p>今日營收：NT$ {{ today_revenue }}</p>
+
+<p>本月營收：NT$ {{ month_revenue }}</p>
+
+<p>總營收：NT$ {{ total_revenue }}</p>
+
+<hr>
+
+<p>
+    <a href="/admin/update_result">
+        🎯 開獎管理
+    </a>
+</p>
+
+<p>
+    <a href="/admin/products">
+        📦 商品管理
+    </a>
+</p>
+
+<p>
+    <a href="/orders">
+        🛒 訂單管理
+    </a>
+</p>
+
+</body>
+</html>

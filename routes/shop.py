@@ -662,12 +662,14 @@ def orders():
     if not is_admin():
         return "❌ 無權限"
 
+    status = request.args.get("status")
+
     conn = get_shop_db()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("""
-        SELECT 
+    sql = """
+        SELECT
             id,
             product_name,
             qty,
@@ -679,14 +681,35 @@ def orders():
             status,
             created_at
         FROM orders
-        ORDER BY created_at DESC
-    """)
+    """
+
+    if status:
+        sql += " WHERE status=? "
+
+    sql += """
+        ORDER BY
+        CASE
+            WHEN status='paid' THEN 0
+            WHEN status='shipped' THEN 1
+            ELSE 2
+        END,
+        created_at DESC
+    """
+
+    if status:
+        c.execute(sql, (status,))
+    else:
+        c.execute(sql)
 
     rows = c.fetchall()
+
     conn.close()
 
-    return render_template("orders.html", orders=rows)
-
+    return render_template(
+        "orders.html",
+        orders=rows,
+        current_status=status
+    )
 
 @shop_bp.route("/product/<int:pid>")
 def product(pid):

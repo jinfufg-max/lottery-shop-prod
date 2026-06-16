@@ -163,3 +163,81 @@ def cleanup_old_bags():
     shop_conn.close()
 
     print(f"✅ 已清除 {deleted} 筆舊福袋")
+
+
+@admin_bp.route("/admin")
+def admin_home():
+
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
+    conn = get_shop_db()
+    c = conn.cursor()
+
+    # 會員數
+    c.execute("SELECT COUNT(*) FROM users")
+    user_count = c.fetchone()[0]
+
+    # 商品數
+    c.execute("SELECT COUNT(*) FROM products")
+    product_count = c.fetchone()[0]
+
+    # 訂單數
+    c.execute("SELECT COUNT(*) FROM orders")
+    order_count = c.fetchone()[0]
+
+    from datetime import datetime
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    month = datetime.now().strftime("%Y-%m")
+
+    # 今日營收
+    c.execute("""
+        SELECT COALESCE(SUM(total),0)
+        FROM orders
+        WHERE status='paid'
+        AND created_at LIKE ?
+    """, (f"{today}%",))
+
+    today_revenue = c.fetchone()[0]
+
+    # 本月營收
+    c.execute("""
+        SELECT COALESCE(SUM(total),0)
+        FROM orders
+        WHERE status='paid'
+        AND created_at LIKE ?
+    """, (f"{month}%",))
+
+    month_revenue = c.fetchone()[0]
+
+    # 總營收
+    c.execute("""
+        SELECT COALESCE(SUM(total),0)
+        FROM orders
+        WHERE status='paid'
+    """)
+
+    total_revenue = c.fetchone()[0]
+
+    # 待出貨
+    c.execute("""
+        SELECT COUNT(*)
+        FROM orders
+        WHERE status='paid'
+    """)
+
+    pending_ship = c.fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "admin_home.html",
+        user_count=user_count,
+        product_count=product_count,
+        order_count=order_count,
+        pending_ship=pending_ship,
+        today_revenue=today_revenue,
+        month_revenue=month_revenue,
+        total_revenue=total_revenue,
+    )
