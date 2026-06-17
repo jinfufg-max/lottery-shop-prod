@@ -92,17 +92,82 @@ def shop():
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    food = c.execute(
-        "SELECT * FROM products WHERE category_id=1 AND status=1"
-    ).fetchall()
+    keyword = request.args.get("q", "").strip()
 
-    accessory = c.execute(
-        "SELECT * FROM products WHERE category_id=2 AND status=1"
-    ).fetchall()
+    if keyword:
 
-    ritual = c.execute(
-        "SELECT * FROM products WHERE category_id=3 AND status=1"
-    ).fetchall()
+        like = f"%{keyword}%"
+
+        food = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=1
+            AND status=1
+            AND (
+                name LIKE ?
+                OR desc LIKE ?
+            )
+            """,
+            (like, like)
+        ).fetchall()
+
+        accessory = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=2
+            AND status=1
+            AND (
+                name LIKE ?
+                OR desc LIKE ?
+            )
+            """,
+            (like, like)
+        ).fetchall()
+
+        ritual = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=3
+            AND status=1
+            AND (
+                name LIKE ?
+                OR desc LIKE ?
+            )
+            """,
+            (like, like)
+        ).fetchall()
+
+    else:
+
+        food = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=1
+            AND status=1
+            """
+        ).fetchall()
+
+        accessory = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=2
+            AND status=1
+            """
+        ).fetchall()
+
+        ritual = c.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category_id=3
+            AND status=1
+            """
+        ).fetchall()
 
     user_id = session.get("user_id")
 

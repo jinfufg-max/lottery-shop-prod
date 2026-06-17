@@ -434,6 +434,47 @@
 
     </div>
 
+    <!-- 🔍 搜尋商品 -->
+
+    <div style="
+        text-align:center;
+        margin:20px auto 30px;
+    ">
+
+        <form method="GET" action="/shop">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ request.args.get('q','') }}"
+                placeholder="搜尋商品..."
+                style="
+                    width:300px;
+                    max-width:80%;
+                    padding:12px;
+                    border:none;
+                    border-radius:10px;
+                    font-size:16px;
+                ">
+
+            <button
+                type="submit"
+                style="
+                    padding:12px 20px;
+                    border:none;
+                    border-radius:10px;
+                    background:#00c853;
+                    color:white;
+                    font-weight:bold;
+                    cursor:pointer;
+                ">
+                🔍 搜尋
+            </button>
+
+        </form>
+
+    </div>
+
     <!-- 食品區 -->
     <h2 class="section-title">🔥 食品區</h2>
 
