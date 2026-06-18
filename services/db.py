@@ -7,7 +7,12 @@ SHOP_DB = os.path.join(BASE_DIR, "data", "shop.db")
 LOTTERY_DB = os.path.join(BASE_DIR, "data", "lottery_v2.db")
 
 
-def get_shop_db():
+def get_shop_db():    
+
+    os.makedirs(
+        os.path.dirname(SHOP_DB),
+        exist_ok=True
+    )
 
     print("========== SHOP DB ==========")
     print(os.path.abspath(SHOP_DB))
@@ -24,6 +29,11 @@ def get_shop_db():
 
 def get_lottery_db():
 
+    os.makedirs(
+        os.path.dirname(LOTTERY_DB),
+        exist_ok=True
+    )
+
     print("======= LOTTERY DB =======")
     print(os.path.abspath(LOTTERY_DB))
     print("==========================")
@@ -35,6 +45,3 @@ def get_lottery_db():
     conn.row_factory = sqlite3.Row
 
     return conn
-
-
-# =========================
