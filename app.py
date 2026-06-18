@@ -52,7 +52,7 @@ from config import (
     EMAIL_PASSWORD,
 )
 
-ECPAY_API_URL = "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5"
+ECPAY_API_URL = "https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5"
 
 
 # =========================
