@@ -62,8 +62,7 @@ def ecpay_checkout(order_no):
         "TotalAmount": str(int(order["total_amount"])),
         "TradeDesc": "商品訂單",
         "ItemName": "商品訂單",
-        "ReturnURL": "https://lottery-shop-prod.onrender.com/payment_return",
-        "OrderResultURL": "https://lottery-shop-prod.onrender.com/shop",
+        "ReturnURL": "https://lottery-shop-prod.onrender.com/payment_return",        
         "ChoosePayment": "Credit",
         "EncryptType": 1,
     }
