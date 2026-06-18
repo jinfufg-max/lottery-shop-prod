@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, send_file
 
 from datetime import datetime
 
@@ -163,6 +163,33 @@ def cleanup_old_bags():
     shop_conn.close()
 
     print(f"✅ 已清除 {deleted} 筆舊福袋")
+
+import os
+
+@admin_bp.route("/admin/download/shopdb")
+def download_shopdb():
+
+    print("======== DOWNLOAD DB ========")
+    print(os.path.abspath("data/shop.db"))
+    print("============================")
+
+    return send_file(
+        "data/shop.db",
+        as_attachment=True,
+        download_name="shop.db"
+    )
+
+@admin_bp.route("/admin/download/lotterydb")
+def download_lotterydb():
+
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
+    return send_file(
+        "data/lottery_v2.db",
+        as_attachment=True,
+        download_name="lottery_v2.db"
+    )
 
 
 @admin_bp.route("/admin")
