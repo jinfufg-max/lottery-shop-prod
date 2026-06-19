@@ -2,6 +2,10 @@ from flask import Blueprint, render_template, request, session, send_file
 
 from datetime import datetime
 
+import os
+import glob
+import shutil
+
 from services.db import get_lottery_db
 
 from services.db import get_shop_db
@@ -164,7 +168,7 @@ def cleanup_old_bags():
 
     print(f"✅ 已清除 {deleted} 筆舊福袋")
 
-import os
+
 
 @admin_bp.route("/admin/download/shopdb")
 def download_shopdb():
@@ -226,6 +230,28 @@ def upload_lotterydb():
     file.save("data/lottery_v2.db")
 
     return "✅ lottery_v2.db 上傳成功"
+
+@admin_bp.route("/admin/backupdb")
+def backupdb():
+
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
+    os.makedirs("data/backup", exist_ok=True)
+
+    now = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    shutil.copy(
+        "data/shop.db",
+        f"data/backup/shop_{now}.db"
+    )
+
+    shutil.copy(
+        "data/lottery_v2.db",
+        f"data/backup/lottery_{now}.db"
+    )
+
+    return "✅ 備份完成"
 
 
 @admin_bp.route("/admin")
