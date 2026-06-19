@@ -169,6 +169,9 @@ import os
 @admin_bp.route("/admin/download/shopdb")
 def download_shopdb():
 
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
     print("======== DOWNLOAD DB ========")
     print(os.path.abspath("data/shop.db"))
     print("============================")
@@ -178,6 +181,23 @@ def download_shopdb():
         as_attachment=True,
         download_name="shop.db"
     )
+
+
+@admin_bp.route("/admin/upload/shopdb", methods=["POST"])
+def upload_shopdb():
+
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
+    file = request.files.get("dbfile")
+
+    if not file:
+        return "❌ 未選擇檔案"
+
+    file.save("data/shop.db")
+
+    return "✅ shop.db 上傳成功"
+
 
 @admin_bp.route("/admin/download/lotterydb")
 def download_lotterydb():
@@ -190,6 +210,22 @@ def download_lotterydb():
         as_attachment=True,
         download_name="lottery_v2.db"
     )
+
+
+@admin_bp.route("/admin/upload/lotterydb", methods=["POST"])
+def upload_lotterydb():
+
+    if session.get("user") != "admin":
+        return "❌ 無權限"
+
+    file = request.files.get("dbfile")
+
+    if not file:
+        return "❌ 未選擇檔案"
+
+    file.save("data/lottery_v2.db")
+
+    return "✅ lottery_v2.db 上傳成功"
 
 
 @admin_bp.route("/admin")

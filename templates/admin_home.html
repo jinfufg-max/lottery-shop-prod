@@ -24,6 +24,40 @@
 
 </div>
 
+<h3>上傳 shop.db</h3>
+
+<form action="/admin/upload/shopdb"
+      method="post"
+      enctype="multipart/form-data">
+
+    <input type="file"
+           name="dbfile"
+           accept=".db">
+
+    <button type="submit">
+        上傳 shop.db
+    </button>
+
+</form>
+
+<hr>
+
+<h3>上傳 lottery_v2.db</h3>
+
+<form action="/admin/upload/lotterydb"
+      method="post"
+      enctype="multipart/form-data">
+
+    <input type="file"
+           name="dbfile"
+           accept=".db">
+
+    <button type="submit">
+        上傳 lottery_v2.db
+    </button>
+
+</form>
+
 <p>會員數：{{ user_count }}</p>
 
 <p>商品數：{{ product_count }}</p>
