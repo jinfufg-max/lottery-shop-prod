@@ -28,17 +28,16 @@ def ecpay_checkout(order_no):
     c.execute(
         """
         SELECT
-            *,
-            (
-                SELECT SUM(total)
-                FROM orders
-                WHERE order_no = ?
-            ) AS total_amount
-        FROM orders
-        WHERE order_no = ?
+            o.*,
+            t.amount AS total_amount
+        FROM orders o
+        LEFT JOIN transactions t
+            ON o.order_no = t.order_no
+            AND t.status = 'pending'
+        WHERE o.order_no = ?
         LIMIT 1
         """,
-        (order_no, order_no),
+        (order_no,),
     )
 
     order = c.fetchone()
@@ -157,17 +156,16 @@ def payment_return():
     c.execute(
         """
         SELECT
-            *,
-            (
-                SELECT SUM(total)
-                FROM orders
-                WHERE order_no = ?
-            ) AS total_amount
-        FROM orders
-        WHERE order_no = ?
+            o.*,
+            t.amount AS total_amount
+        FROM orders o
+        LEFT JOIN transactions t
+            ON o.order_no = t.order_no
+            AND t.status = 'pending'
+        WHERE o.order_no = ?
         LIMIT 1
         """,
-        (merchant_trade_no, merchant_trade_no),
+        (merchant_trade_no,),
     )
 
     order = c.fetchone()
