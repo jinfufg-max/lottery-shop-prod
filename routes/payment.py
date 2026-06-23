@@ -61,7 +61,13 @@ def ecpay_checkout(order_no):
         "TotalAmount": str(int(order["total_amount"])),
         "TradeDesc": "商品訂單",
         "ItemName": "商品訂單",
-        "ReturnURL": "https://lottery-shop-prod.onrender.com/payment_return",        
+        "ReturnURL": "https://lottery-shop-prod.onrender.com/payment_return",
+
+        "OrderResultURL":
+        "https://lottery-shop-prod.onrender.com/payment_success",
+
+        "ClientBackURL":
+        "https://lottery-shop-prod.onrender.com",        
         "ChoosePayment": "Credit",
         "EncryptType": 1,
     }
@@ -104,6 +110,87 @@ def generate_check_mac_value(params, hash_key, hash_iv):
     print("encoded =", encoded)
 
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest().upper()
+
+@payment_bp.route("/payment_success", methods=["GET", "POST"])
+def payment_success():
+
+    print("===== payment_success =====")
+    print("method =", request.method)
+    print("form =", request.form)
+
+    merchant_trade_no = request.form.get("MerchantTradeNo")
+
+    print("merchant_trade_no =", merchant_trade_no)
+
+    # 沒收到綠界資料也不要炸
+    if not merchant_trade_no:
+        return render_template(
+            "order_success.html",
+            order_no="付款成功",
+            payment="credit",
+            total=0,
+            name="會員"
+        )
+
+    conn = get_shop_db()
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute(
+        """
+        SELECT *
+        FROM orders
+        WHERE order_no = ?
+        LIMIT 1
+        """,
+        (merchant_trade_no,)
+    )
+
+    order = c.fetchone()
+
+    conn.close()
+
+    print("order =", order)
+    print("order keys =", order.keys() if order else None)
+
+    if order:
+        print("total =", order["total"])
+
+        if "total_amount" in order.keys():
+            print("total_amount =", order["total_amount"])
+
+        if "shipping" in order.keys():
+            print("shipping =", order["shipping"])
+
+    # 查不到訂單也不要炸
+    if not order:
+        return render_template(
+            "order_success.html",
+            order_no=merchant_trade_no,
+            payment="credit",
+            total=0,
+            name="會員"
+        )
+
+    receiver_name = "會員"
+
+    if "receiver_name" in order.keys():
+        receiver_name = order["receiver_name"]
+    elif "name" in order.keys():
+        receiver_name = order["name"]
+
+    total_amount = 0
+
+    if "total" in order.keys():
+        total_amount = order["total"]
+
+    return render_template(
+        "order_success.html",
+        order_no=order["order_no"],
+        payment="credit",
+        total=total_amount,
+        name=receiver_name
+    )
 
 
 @payment_bp.route("/payment_return", methods=["POST"])
