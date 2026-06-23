@@ -980,7 +980,23 @@ def checkout_cart():
 
         discount_amount = original_total - cart_total
 
-        
+        # =========================
+        # 修正 orders 金額
+        # =========================
+
+        c.execute(
+            """
+            UPDATE orders
+            SET total=?,
+                shipping=?
+            WHERE order_no=?
+            """,
+            (
+                cart_total,
+                shipping,
+                order_no
+            )
+        )
 
         c.execute(
             """
