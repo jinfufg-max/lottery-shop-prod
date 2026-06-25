@@ -578,41 +578,28 @@ def payment_return():
 
             c.execute(
                 """
-                SELECT 1
-                FROM transactions
-                WHERE order_no = ?
-                AND type = 'earn'
-                LIMIT 1
-                """,
-                (merchant_trade_no,),
-            )
-
-            exists = c.fetchone()
-
-            if not exists:
-
-                c.execute(
-                    """
-                    INSERT INTO transactions
-                    (
-                        user_id,
-                        type,
-                        amount,
-                        source_type,
-                        note,
-                        order_no
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        order["user_id"],
-                        "earn",
-                        reward_points,
-                        "shop_reward",
-                        "消費回饋",
-                        merchant_trade_no,
-                    ),
+                INSERT INTO transactions
+                (
+                    user_id,
+                    type,
+                    amount,
+                    source_type,
+                    note,
+                    order_no,
+                    created_at
                 )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    order["user_id"],
+                    "earn",
+                    reward_points,
+                    "shop_reward",
+                    "消費回饋",
+                    merchant_trade_no,
+                    now,
+                ),
+            )
 
     # =========================
     # 更新交易狀態
