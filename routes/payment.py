@@ -114,6 +114,9 @@ def generate_check_mac_value(params, hash_key, hash_iv):
 @payment_bp.route("/payment_success", methods=["GET", "POST"])
 def payment_success():
 
+    print("############################")
+    print("PAYMENT_SUCCESS_NEW_VERSION")
+    print("############################")
     print("===== payment_success =====")
     print("session =", dict(session))
     print("session id =", session.get("user_id"))
