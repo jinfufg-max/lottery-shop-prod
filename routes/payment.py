@@ -115,6 +115,8 @@ def generate_check_mac_value(params, hash_key, hash_iv):
 def payment_success():
 
     print("===== payment_success =====")
+    print("session =", dict(session))
+    print("session id =", session.get("user_id"))
     print("method =", request.method)
     print("form =", request.form)
 
@@ -184,6 +186,8 @@ def payment_success():
     if "total" in order.keys():
         total_amount = order["total"]
 
+    print("before render =", dict(session))
+
     return render_template(
         "order_success.html",
         order_no=order["order_no"],
@@ -191,7 +195,6 @@ def payment_success():
         total=total_amount,
         name=receiver_name
     )
-
 
 @payment_bp.route("/payment_return", methods=["POST"])
 def payment_return():
@@ -421,7 +424,7 @@ def payment_return():
     )
 
     print("transaction updated =", c.rowcount)
-
+    
     # =========================
     # 重新取得最新訂單
     # =========================
@@ -435,6 +438,7 @@ def payment_return():
     )
 
     order = c.fetchone()
+    
     # =========================
     # 會員付款完成 → 建立會員
     # =========================   
@@ -536,6 +540,76 @@ def payment_return():
                 order["user_id"],
             ),
         )
+
+    # =========================
+    # 商品購買回饋準提點數
+    # 每100元送1點
+    # =========================
+    if (
+        order
+        and order["order_type"] == "shop"
+        and order["user_id"] is not None
+    ):
+
+        reward_points = int(order["total"]) // 100
+
+        if reward_points > 0:
+
+            c.execute(
+                """
+                UPDATE users
+                SET points = points + ?
+                WHERE id = ?
+                """,
+                (
+                    reward_points,
+                    order["user_id"],
+                ),
+            )
+
+            print(
+                f"🎁 已回饋 {reward_points} 點準提點數"
+            )
+
+            now = (datetime.utcnow() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
+
+            c.execute(
+                """
+                SELECT 1
+                FROM transactions
+                WHERE order_no = ?
+                AND type = 'earn'
+                LIMIT 1
+                """,
+                (merchant_trade_no,),
+            )
+
+            exists = c.fetchone()
+
+            if not exists:
+
+                c.execute(
+                    """
+                    INSERT INTO transactions
+                    (
+                        user_id,
+                        type,
+                        amount,
+                        source_type,
+                        note,
+                        order_no
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        order["user_id"],
+                        "earn",
+                        reward_points,
+                        "shop_reward",
+                        "消費回饋",
+                        merchant_trade_no,
+                    ),
+                )
 
     # =========================
     # 更新交易狀態

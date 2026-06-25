@@ -55,7 +55,7 @@ NT${total}
 
 def send_welcome_email(email, username, points):
 
-    subject = "歡迎加入錦蚨豐準提商城"
+    subject = "歡迎加入錦蚨豐國際準提商城"
 
     body = f"""
 您好 {username}：
@@ -72,11 +72,11 @@ def send_welcome_email(email, username, points):
 
 立即登入體驗：
 
-✓ 錦蚨豐準提商城
+✓ 錦蚨豐國際準提商城
 
 祝您順心如意。
 
-錦蚨豐錦蚨豐準提商城
+錦蚨豐國際準提商城
 """
 
     msg = MIMEMultipart()

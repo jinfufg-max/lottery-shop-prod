@@ -448,40 +448,48 @@ def create_order():
             c.execute(
                 """
                 INSERT INTO orders (
+                    user_id,
+                    username,
+                    order_type,
                     product_id,
                     product_name,
+                    qty,
                     price,
                     subtotal,
-                    shipping,
                     total,
-                    qty,
                     name,
                     phone,
                     address,
                     email,
                     payment_method,
                     status,
-                    username,
                     order_no,
                     created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )
                 """,
                 (
+                    session.get("user_id", 0),
+                    username,
+                    "shop",
+
                     product_id,
                     product_name,
+                    qty,
                     price,
                     subtotal,
-                    point_shipping,
                     final_total,
-                    qty,
+
                     name,
                     phone,
                     address,
                     email,
+
                     payment,
                     "paid",
-                    username,
+
                     order_no,
                     now,
                 ),
@@ -610,6 +618,9 @@ def create_order():
             c.execute(
                 """
                 INSERT INTO orders (
+                    user_id,
+                    username,
+                    order_type,
                     product_id,
                     product_name,
                     price,
@@ -623,13 +634,18 @@ def create_order():
                     email,
                     payment_method,
                     status,
-                    username,
                     order_no,
                     created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )
                 """,
                 (
+                    user_id,
+                    username,
+                    "shop",
+
                     product_id,
                     product_name,
                     price,
@@ -637,13 +653,15 @@ def create_order():
                     shipping,
                     final_total,
                     qty,
+
                     name,
                     phone,
                     address,
                     email,
+
                     "cash",
                     "pending",
-                    username,
+
                     order_no,
                     now,
                 ),
@@ -919,6 +937,9 @@ def checkout_cart():
 
             c.execute("""
                 INSERT INTO orders (
+                    user_id,
+                    username,
+                    order_type,
                     product_id,
                     product_name,
                     qty,
@@ -935,19 +956,25 @@ def checkout_cart():
                     created_at
                 )
                 VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
             """, (
+                session.get("user_id", 0),
+                session.get("username", ""),
+                "shop",
+
                 product["id"],
                 product["name"],
                 qty,
                 product["price"],
                 subtotal,
                 subtotal,
+
                 name,
                 phone,
                 address,
                 email,
+
                 payment_type,
                 "pending",
                 order_no,
