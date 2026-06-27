@@ -801,6 +801,77 @@ def product(pid):
 
     c.execute("SELECT * FROM products WHERE id=?", (pid,))
     product = c.fetchone()
+    
+    c.execute("""
+        SELECT
+            product_reviews.rating,
+            product_reviews.content,
+            product_reviews.created_at,
+            users.username
+        FROM product_reviews
+        LEFT JOIN users
+            ON product_reviews.user_id = users.id
+        WHERE product_reviews.product_id = ?
+        AND product_reviews.status = 1
+        ORDER BY product_reviews.created_at DESC
+    """, (pid,))
+
+    reviews = c.fetchall()
+
+    c.execute("""
+        SELECT
+            ROUND(AVG(rating),1) AS avg_rating,
+            COUNT(*) AS review_count
+        FROM product_reviews
+        WHERE product_id = ?
+        AND status = 1
+    """, (pid,))
+
+    review_info = c.fetchone()
+
+    can_review = False
+
+    if "user_id" in session:
+
+        c.execute("""
+            SELECT order_no
+            FROM orders
+            WHERE
+                user_id=?
+            AND
+                product_id=?
+            AND
+                status='paid'
+            LIMIT 1
+        """,
+        (
+            session["user_id"],
+            pid
+        ))
+
+        order = c.fetchone()
+
+        if order:
+
+            c.execute("""
+                SELECT 1
+                FROM product_reviews
+                WHERE
+                    order_no=?
+                AND
+                    product_id=?
+                AND
+                    user_id=?
+            """,
+            (
+                order["order_no"],
+                pid,
+                session["user_id"]
+            ))
+
+            if not c.fetchone():
+                can_review = True
+
     conn.close()
 
     if not product:
@@ -809,7 +880,92 @@ def product(pid):
     if "status" in product.keys() and product["status"] == 0:
         return "商品已下架"
 
-    return render_template("product.html", product=product)
+    return render_template(
+        "product.html",
+        product=product,
+        reviews=reviews,
+        review_info=review_info,
+        can_review=can_review
+    )
+
+@shop_bp.route("/review/<int:pid>", methods=["POST"])
+def review(pid):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    rating = int(request.form["rating"])
+    content = request.form["content"].strip()
+
+    conn = get_shop_db()
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT order_no
+        FROM orders
+        WHERE
+            user_id=?
+        AND
+            product_id=?
+        AND
+            status='paid'
+        LIMIT 1
+    """,
+    (
+        session["user_id"],
+        pid
+    ))
+
+    order = c.fetchone()
+
+    if not order:
+        conn.close()
+        return "尚未購買商品"
+
+    c.execute("""
+        SELECT 1
+        FROM product_reviews
+        WHERE
+            order_no=?
+        AND
+            product_id=?
+        AND
+            user_id=?
+    """,
+    (
+        order["order_no"],
+        pid,
+        session["user_id"]
+    ))
+
+    if c.fetchone():
+        conn.close()
+        return "已評論過"
+
+    c.execute("""
+        INSERT INTO product_reviews
+        (
+            product_id,
+            user_id,
+            order_no,
+            rating,
+            content
+        )
+        VALUES (?, ?, ?, ?, ?)
+    """,
+    (
+        pid,
+        session["user_id"],
+        order["order_no"],
+        rating,
+        content
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f"/product/{pid}")
 
 @shop_bp.route("/cart")
 def cart():

@@ -336,6 +336,98 @@ function updateSubtotal() {
 
             <!-- 備用回商店 -->
             <br>
+
+        <hr style="margin:50px 0;">
+
+        <h2>商品評價</h2>
+
+        <p>
+        ⭐ {{ review_info["avg_rating"] or 0 }}
+        （{{ review_info["review_count"] }} 則評價）
+        </p>
+
+        {% if can_review %}
+
+        <form action="/review/{{ product['id'] }}" method="POST"
+            style="margin:25px 0;">
+
+            <div style="margin-bottom:10px;">
+                評分：
+                <select name="rating" required>
+                    <option value="5">★★★★★</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="1">★☆☆☆☆</option>
+                </select>
+            </div>
+
+            <textarea
+                name="content"
+                rows="4"
+                style="
+                    width:100%;
+                    border-radius:8px;
+                    padding:10px;
+                "
+                placeholder="分享您的使用心得..."
+                required
+            ></textarea>
+
+            <br><br>
+
+            <button
+                type="submit"
+                style="
+                    padding:10px 30px;
+                    border:none;
+                    border-radius:8px;
+                    background:#f4b400;
+                    cursor:pointer;
+                    font-weight:bold;
+                ">
+                送出評價
+            </button>
+
+        </form>
+
+        <hr style="margin:30px 0;">
+
+        {% endif %}
+
+        {% if reviews %}
+
+            {% for review in reviews %}
+
+                <div style="
+                    background:#0b3b40;
+                    padding:15px;
+                    border-radius:10px;
+                    margin-bottom:15px;
+                ">
+
+                    <div style="font-weight:bold;margin-bottom:6px;">
+                        {{ review["username"][:1] }}＊＊
+                    　⭐ {{ review["rating"] }}/5
+                    </div>
+
+                    <div style="margin:10px 0;">
+                        {{ review["content"] }}
+                    </div>
+
+                    <small style="color:#bbb;">
+                        {{ review["created_at"] }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+        <p>目前尚無評價。</p>
+
+        {% endif %}
             <a href="/shop" style="font-size:22px" class="back">← 回商店</a>
 
         </div>
